@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from core.container import container
+from core.database.engine import engine
 
 
 @asynccontextmanager
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # - Initialize MinIO
 
     app.state.container = container
+    container.db_engine = engine
 
     yield
 
@@ -27,3 +29,4 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """
 
     # Dispose resources here
+    await engine.dispose()
